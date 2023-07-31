@@ -1,0 +1,8 @@
+apiVersion: builtin
+kind: PrefixSuffixTransformer
+metadata:
+  name: customPrefixer
+prefix: "${CI_PROJECT_NAME}-${CI_COMMIT_BRANCH}-"
+fieldSpecs:
+- kind: Deployment
+  path: spec/template/spec/volumes/configMap/name

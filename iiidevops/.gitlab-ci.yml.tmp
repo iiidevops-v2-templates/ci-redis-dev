@@ -1,15 +1,13 @@
 stages:
-  - initial
-  - scan
-  - build
-  - deploy
-  - test
-
+- initial
+- scan
+- build
+- deploy
+- test
 include:
-  - project: 'iiidevops-templates/ci-template'
-    ref: 'v2.5.4'
-    file: 'ci/template.gitlab-ci.yml'
-
+- project: iiidevops-templates/ci-template
+  ref: v2.5.5
+  file: ci/template.gitlab-ci.yml
 Deploy--Redis:
   stage: deploy
   variables:
@@ -19,24 +17,24 @@ Deploy--Redis:
   - envsubst < k8s/deploy-prefix-transformer.yaml.tmp > k8s/deploy-prefix-transformer.yaml
   - kubectl kustomize k8s/ | kubectl apply -f -
   only:
-    - develop
-
-Deploy--Wait Redis :
+  - develop
+Deploy--Wait Redis:
   stage: deploy
   image:
     name: iiiorg/iiidevops-cli:0.0.7
-    entrypoint: [ "" ]
+    entrypoint:
+    - ''
   variables:
     iiidevops: deployed-environments
     max_wait: 128
     namespace: ${CI_PROJECT_NAME}
     deploy_name: ${CI_PROJECT_NAME}-${CI_COMMIT_BRANCH}-redis
   needs:
-    - "Deploy--Redis"
+  - Deploy--Redis
   script:
-    - deploy-wait.pl
+  - deploy-wait.pl
   only:
-    - develop
+  - develop
   except:
     variables:
-      - $CI_COMMIT_MESSAGE =~ /.*\(store\)$/
+    - $CI_COMMIT_MESSAGE =~ /.*\(store\)$/
